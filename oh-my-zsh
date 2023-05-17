@@ -1,0 +1,13 @@
+#!/bin/bash
+sudo apt install zsh
+sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+zshrc_path=~/.zshrc
+new_line="plugins=(
+  git
+  zsh-autosuggestions
+  zsh-syntax-highlighting
+)"
+new_theme="
+sed -i "s/plugins=(git)/$new_line/" $zshrc_path
+sed -i "s/robbyrussell/candy/" $zshrc_path
+source ~/.zshrc
