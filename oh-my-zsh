@@ -7,7 +7,6 @@ new_line="plugins=(
   zsh-autosuggestions
   zsh-syntax-highlighting
 )"
-new_theme="
 sed -i "s/plugins=(git)/$new_line/" $zshrc_path
 sed -i "s/robbyrussell/candy/" $zshrc_path
 source ~/.zshrc
