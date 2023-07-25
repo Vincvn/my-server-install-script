@@ -1,0 +1,57 @@
+#!/bin/bash
+#######################################################
+# Docker Installer
+# Offical commands can find at https://docs.docker.com/engine/
+# curl -sO https://raw.githubusercontent.com/Vincvn/server-install-collection/main/install-docker && chmod +x ./install-docker && sudo ./install-docker
+#######################################################
+if [ $(id -u) != "0" ]; then
+    echo "You need to be root to perform this command"
+    exit
+fi
+if [[ -z "$(cat /etc/resolv.conf)" ]]; then
+    echo ""
+    echo "/etc/resolv.conf is empty. No nameserver resolvers detected !! "
+    echo "Please configure your /etc/resolv.conf correctly or you will not"
+    echo "be able to use the internet or download from your server."
+    echo "aborting script... please re-run install"
+    echo ""
+    exit
+fi
+source /etc/os-release
+if [ "$ID" == "centos" ]; then
+  if [ -x "$(command -v docker)" ]; then
+    sudo yum remove docker \
+                      docker-client \
+                      docker-client-latest \
+                      docker-common \
+                      docker-latest \
+                      docker-latest-logrotate \
+                      docker-logrotate \
+                      docker-engine
+  fi
+  sudo yum install -y yum-utils
+  sudo yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo
+  sudo yum install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+  sudo systemctl start docker
+fi
+if [ "$ID" == "ubuntu" ]; then
+  if [ -x "$(command -v docker)" ]; then
+    sudo apt-get remove docker docker-engine docker.io containerd runc
+  fi
+  sudo apt-get update
+  sudo apt-get install \
+      ca-certificates \
+      curl \
+      gnupg \
+      lsb-release
+  sudo mkdir -p /etc/apt/keyrings
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  sudo apt-get update
+  sudo chmod a+r /etc/apt/keyrings/docker.gpg
+  sudo apt-get update
+  sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+fi
+sudo systemctl enable docker.service
+sudo systemctl enable containerd.service
