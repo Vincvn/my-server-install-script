@@ -1,0 +1,13 @@
+#!/bin/bash
+if ! command -v certbot &>/dev/null; then
+  echo "Certbot not found, installing..."
+  sudo apt install certbot
+fi
+# Get the domain name from the user, if not provided
+domain="$1"
+if [ -z "$domain" ]; then
+  # Get the domain name from the user
+  read -p "Enter the domain name: " domain
+fi
+# Run Certbot to create a certificate via DNS
+sudo certbot certonly --dns-challenge --domain $domain
