@@ -6,7 +6,15 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+if ! command -v certbot &>/dev/null; then
+  echo "Certbot not found, installing..."
+  sudo apt install certbot
+fi
+
 read -p "Ban co muon cai dat Nginx (y/n)? " install_nginx
+
+read -p "Ban co muon cai dat Podman (y/n)? " install_podman
+
 
 # Cài đặt Zsh
 echo "Cai dat Zsh..."
@@ -47,6 +55,11 @@ if [[ $install_nginx == "y" ]]; then
     curl -fsSL https://nginx.org/keys/nginx_signing.key | apt-key add -
     apt-get update
     apt-get install -y nginx
+fi
+
+if [[ $install_podman == "y" ]]; then
+    echo "Cai dat Podman..."
+    apt-get install -y podman
 fi
 
 echo "Hoan thanh. Vui long dang nhap lai hoac khoi dong lai he thong de ap dung thay doi."
