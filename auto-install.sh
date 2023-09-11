@@ -5,10 +5,11 @@ if [[ $EUID -ne 0 ]]; then
    echo "Script phai chay voi quyen root." 
    exit 1
 fi
+useradd -m vincent
 
 if ! command -v certbot &>/dev/null; then
   echo "Certbot not found, installing..."
-  sudo apt install certbot
+  sudo apt install -y git curl certbot
 fi
 
 read -p "Ban co muon cai dat Nginx (y/n)? " install_nginx
