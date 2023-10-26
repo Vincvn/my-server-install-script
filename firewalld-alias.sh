@@ -10,4 +10,5 @@ else
     echo "\n# Custom Aliases for firewall-cmd" >> ~/.zshrc
     echo "$alias" >> ~/.zshrc
     echo "Aliases added to ~/.zshrc"
+    source ~/.zshrc
 fi
