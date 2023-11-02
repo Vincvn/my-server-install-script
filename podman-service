@@ -1,0 +1,66 @@
+#!/bin/bash
+
+if [ $# -lt 1 ] || [ $# -gt 8 ]; then
+  echo "Cach su dung: $0 --name <ten dich vu> [--after <ten dich vu>] [--requires <ten dich vu>] [--wants <ten dich vu>]"
+  exit 1
+fi
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --new)
+      NEW=1
+      ;;
+    --name)
+      shift
+      SERVICE_NAME="$1"
+      ;;
+    --after)
+      shift
+      AFTER_SERVICE="$1"
+      ;;
+    --requires)
+      shift
+      REQUIRES_SERVICE="$1"
+      ;;
+    --wants)
+      shift
+      WANTS_SERVICE="$1"
+      ;;
+    *)
+      echo "Lenh khong hop: $1"
+      exit 1
+  esac
+  shift
+done
+
+if [ -z "$SERVICE_NAME" ]; then
+  echo "Nhap ten dich vu."
+  exit 1
+fi
+
+COMMAND="podman generate systemd -f"
+#if [ -n "$AFTER_SERVICE" ]; then
+  #COMMAND="$COMMAND --after=$AFTER_SERVICE"
+#fi
+#if [ -n "$REQUIRES_SERVICE" ]; then
+  #COMMAND="$COMMAND --requires=$REQUIRES_SERVICE"
+#fi
+#if [ -n "$WANTS_SERVICE" ]; then
+  #COMMAND="$COMMAND --wants=$WANTS_SERVICE"
+#fi
+
+COMMAND="$COMMAND --name $SERVICE_NAME"
+
+echo "$COMMAND"
+
+eval "$COMMAND"
+
+if [ -n "$AFTER_SERVICE" ]; then
+  echo "After=$AFTER_SERVICE" >> "container-$SERVICE_FILE.service"
+fi
+
+mv -v container-$SERVICE_NAME.service ~/.config/systemd/user/
+systemctl --user daemon-reload
+systemctl --user enable container-$SERVICE_NAME.service
+systemctl --user start container-$SERVICE_NAME.service
+systemctl --user status container-$SERVICE_NAME.service
